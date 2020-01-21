@@ -1,3 +1,23 @@
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build 
+
+# Intellij
+*.iml
+*.iws
+.idea/*.*
+.idea/copyright
+.idea/inspectionProfiles
+.idea/libraries
+.idea/modules
+.idea/scopes
+.idea/shelf
+.idea/dataSources
+.idea/artifacts
+.idea/codeStyles
+
 # Compiled class file
 *.class
 
@@ -12,6 +32,7 @@
 
 # Package Files #
 *.jar
+!lib/*.jar
 *.war
 *.nar
 *.ear
