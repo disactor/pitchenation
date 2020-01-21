@@ -253,9 +253,6 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
                 float probability = pitchDetectionResult.getProbability();
                 double rms = audioEvent.getRMS() * 100;
                 Pitch guess = matchPitch(pitch);
-//            String guessEhroma = guess == null ? "" : guess.getEhroma();
-//            String message = String.format("    %s %.2fHz - %.2f | %.5f", guessChroma, pitch, probability, rms);
-//            out(message);
                 if (guess != null) {
                     play(pitch, probability, rms, guess);
                 }
