@@ -4,6 +4,7 @@
 - slf4j
 - Port to iOS and Android
 - Documentation / how to play
+- Visualize chords
 
  [Fa] Fa  -  [Fa4] Fa2 [349.23Hz] 87.90Hz - 1.00 | 4.13639
  [Ri6] is the new riddle

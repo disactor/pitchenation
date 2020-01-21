@@ -248,13 +248,11 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
     @Override
     public void handlePitch(PitchDetectionResult pitchDetectionResult, AudioEvent audioEvent) {
         try {
+//                out(String.format("        %.2fHz - %.2f", pitchDetectionResult.getPitch(), pitchDetectionResult.getProbability()));
             if (pitchDetectionResult.getPitch() != -1) {
-                float pitch = pitchDetectionResult.getPitch();
-                float probability = pitchDetectionResult.getProbability();
-                double rms = audioEvent.getRMS() * 100;
-                Pitch guess = matchPitch(pitch);
+                Pitch guess = matchPitch(pitchDetectionResult.getPitch());
                 if (guess != null) {
-                    play(pitch, probability, rms, guess);
+                    play(pitchDetectionResult.getPitch(), pitchDetectionResult.getProbability(), audioEvent.getRMS() * 100, guess);
                 }
             }
         } catch (RuntimeException e) {
