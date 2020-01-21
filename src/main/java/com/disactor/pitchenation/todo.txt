@@ -2,7 +2,8 @@
 - Natural color i.e. match proportion frequency directly to octave
 - Configuration: show log, notes, range, probability, octave tolerance, playInit="", export config do txt
 - slf4j
-
+- Port to iOS and Android
+- Documentation / how to play
 
  [Fa] Fa  -  [Fa4] Fa2 [349.23Hz] 87.90Hz - 1.00 | 4.13639
  [Ri6] is the new riddle
