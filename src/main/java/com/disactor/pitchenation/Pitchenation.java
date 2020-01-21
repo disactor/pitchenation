@@ -78,7 +78,8 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
     private static final Map<Integer, Pitch> pitchByOrdinal = Stream.of(Pitch.values())
             .collect(Collectors.toMap(Pitch::ordinal, pitch -> pitch));
     private static final PitchEstimationAlgorithm defaultPitchAlgo = PitchEstimationAlgorithm.MPM;
-    private static final Pitch playOnSuccess = Pitch.Do4;
+//    private static final Pitch playOnSuccess = Pitch.Do4;
+    private static final Pitch playOnSuccess = null;
 
     private final JPanel riddlePanel;
     private final JPanel guessPanel;
@@ -141,11 +142,13 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
                     this.guess.set(null);
 
                     player.play(riddle.getNote());
-                    SwingUtilities.invokeLater(() -> {
-                        riddleLabel.setText(" " + playOnSuccess.getChroma() + " ");
-                        riddlePanel.setBackground(chromaToColor.get(playOnSuccess.getChroma()));
-                    });
-                    player.play(playOnSuccess.getNote());
+                    if (playOnSuccess != null) {
+                        SwingUtilities.invokeLater(() -> {
+                            riddleLabel.setText(" " + playOnSuccess.getChroma() + " ");
+                            riddlePanel.setBackground(chromaToColor.get(playOnSuccess.getChroma()));
+                        });
+                        player.play(playOnSuccess.getNote());
+                    }
                     play(-1, 0, 0, guess);
                 } else {
                     if (isRunning.get()) {
@@ -331,6 +334,7 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
         riddleLabel.setForeground(Color.WHITE);
         riddleLabel.setBackground(Color.BLACK);
         riddleLabel.setOpaque(true);
+        riddleLabel.setVisible(false);
 
         guessPanel = new JPanel();
         add(guessPanel);
@@ -372,12 +376,12 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
 
         pack();
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(screen.width - getSize().width - 15, screen.height / 2 - getSize().height / 2);
+        setLocation(screen.width - getSize().width - 100, screen.height / 2 - getSize().height / 2);
         setVisible(true);
 
         Mixer.Info finalMixer = defaultMixer;
         executor.execute(() -> {
-            player.play(playOnSuccess.getNote());
+            player.play(Pitch.Do4.getNote());
             if (isRunning.get()) {
                 play(-1, 0, 0, null);
             }
