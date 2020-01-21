@@ -286,7 +286,29 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
                 }
         );
 
-        JPanel inputPanel = new InputPanel();
+        Mixer.Info defaultMixer = null;
+        Vector<Mixer.Info> mixerInfos = Shared.getMixerInfo(false, true);
+        if (mixerInfos.size() > 0) {
+            for (Mixer.Info mixerInfo : mixerInfos) {
+                if (mixerInfo.toString().toLowerCase().contains("default")) {
+                    defaultMixer = mixerInfo;
+                    break;
+                }
+            }
+            if (defaultMixer == null) {
+                for (Mixer.Info mixerInfo : mixerInfos) {
+                    if (mixerInfo.toString().toLowerCase().contains("primary")) {
+                        defaultMixer = mixerInfo;
+                        break;
+                    }
+                }
+            }
+            if (defaultMixer == null) {
+                defaultMixer = mixerInfos.get(0);
+            }
+        }
+
+        JPanel inputPanel = new InputPanel(defaultMixer);
         add(inputPanel);
         inputPanel.addPropertyChangeListener("mixer", event -> {
             try {
@@ -358,15 +380,15 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
         setLocation(screen.width - getSize().width - 15, screen.height / 2 - getSize().height / 2);
         setVisible(true);
 
+        Mixer.Info finalMixer = defaultMixer;
         executor.execute(() -> {
             player.play(playOnSuccess.getNote());
             if (isRunning.get()) {
                 play(-1, 0, 0, null);
             }
-            Vector<Mixer.Info> mixerInfos = Shared.getMixerInfo(false, true);
-            if (mixerInfos.size() > 0) {
+            if (finalMixer != null) {
                 try {
-                    Mixer mixer = AudioSystem.getMixer(mixerInfos.get(0));
+                    Mixer mixer = AudioSystem.getMixer(finalMixer);
                     setNewMixer(mixer);
                 } catch (LineUnavailableException e) {
                     e.printStackTrace();
@@ -413,8 +435,7 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
 
         final AudioFormat format = new AudioFormat(sampleRate, 16, 1, true, true);
         final DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, format);
-        TargetDataLine line;
-        line = (TargetDataLine) mixer.getLine(dataLineInfo);
+        TargetDataLine line = (TargetDataLine) mixer.getLine(dataLineInfo);
         line.open(format, bufferSize);
         line.start();
         final AudioInputStream stream = new AudioInputStream(line);
@@ -435,12 +456,11 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
 
         Mixer mixer = null;
 
-        public InputPanel() {
+        public InputPanel(Mixer.Info defaultMixer) {
             super(new BorderLayout());
             this.setBorder(new TitledBorder("Input"));
             JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
             ButtonGroup group = new ButtonGroup();
-            boolean isFirst = true;
             for (Mixer.Info info : Shared.getMixerInfo(false, true)) {
                 JRadioButton button = new JRadioButton();
                 button.setText(Shared.toLocalString(info));
@@ -451,9 +471,8 @@ public class Pitchenation extends JFrame implements PitchDetectionHandler {
                     String command = event.getActionCommand();
                     setMixer(command);
                 });
-                if (isFirst) {
+                if (info.equals(defaultMixer)) {
                     button.setSelected(true);
-                    isFirst = false;
                 }
             }
 
